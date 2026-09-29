@@ -1,0 +1,16 @@
+[project]
+name = "flood-ml"
+version = "0.1.0"
+description = "Machine learning package scaffold for flood simulation workflows"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "scipy>=1.10",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/flood_ml"]

@@ -1,0 +1,33 @@
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Node / frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Python / backend
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+ml/.pytest_cache/
+.env
+.env.*
+backend/.venv/
+backend/.python-version
+
+# Data directories
+# Keep the structure but ignore generated contents.
+data/raw/*
+!data/raw/.gitkeep
+
+data/processed/*
+!data/processed/.gitkeep
+
+data/synthetic_scenarios/*
+!data/synthetic_scenarios/.gitkeep

@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-gauge-room: #11171A;
+  --color-gauge-panel: #1A2226;
+  --color-rule: #2E3B40;
+  --color-paper: #E9E4D3;
+  --color-paper-panel: #DDD6C0;
+  --color-ink: #1E2723;
+  --color-offwhite: #E6E2D3;
+  --color-lichen: #6E8B74;
+  --color-contour: #7D8A80;
+  --color-watch-amber: #E0A526;
+  --color-danger-vermilion: #E2461F;
+}
+
+* {
+  box-sizing: border-box;
+  border-radius: 0 !important;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #11171A;
+  color: #E6E2D3;
+}
+
+/* Subtle SVG feTurbulence grain overlay (opacity <= 0.06), pure CSS inline data URI */
+.gauge-grain {
+  position: relative;
+}
+.gauge-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Survey double rule: two 1px lines with 3px gap */
+.double-rule-h {
+  position: relative;
+  height: 5px;
+  width: 100%;
+  border-top: 1px solid #2E3B40;
+  border-bottom: 1px solid #2E3B40;
+}
+.double-rule-v {
+  position: relative;
+  width: 5px;
+  height: 100%;
+  border-left: 1px solid #2E3B40;
+  border-right: 1px solid #2E3B40;
+}
+
+/* Survey stamp: double border, uppercase, slight letterspacing */
+.survey-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px double currentColor;
+  outline: 1px solid currentColor;
+  outline-offset: 1px;
+}
+
+/* Leaflet map survey styling: OSM tiles filtered with CSS (grayscale + contrast + darkened, sepia tint) */
+.survey-map .leaflet-tile-pane {
+  filter: grayscale(100%) invert(92%) sepia(25%) hue-rotate(140deg) saturate(30%) brightness(55%) contrast(140%);
+}
+
+.survey-map .leaflet-container {
+  background-color: #11171A;
+}
+
+/* Diagonal hatch pattern for inundation extent */
+.hatch-pattern {
+  background-size: 8px 8px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(226, 70, 31, 0.35) 0px,
+    rgba(226, 70, 31, 0.35) 1.5px,
+    transparent 1.5px,
+    transparent 6px
+  );
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
