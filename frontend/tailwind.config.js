@@ -29,6 +29,7 @@ export default {
         display: ['"Big Shoulders Display"', 'sans-serif'],
         sans: ['"IBM Plex Sans"', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'monospace'],
+        devanagari: ['"Noto Sans Devanagari"', 'sans-serif'],
       },
       fontSize: {
         'scale-11': ['11px', '14px'],

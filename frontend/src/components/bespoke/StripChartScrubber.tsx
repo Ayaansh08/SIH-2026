@@ -1,10 +1,11 @@
-import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 
 interface StripChartScrubberProps {
   currentTimestep: number;
   onTimestepChange: (t: number) => void;
   isPlaying: boolean;
   onTogglePlay: () => void;
+  scenarioName?: string;
   maxMinutes?: number;
   className?: string;
 }
@@ -14,17 +15,16 @@ export const StripChartScrubber = ({
   onTimestepChange,
   isPlaying,
   onTogglePlay,
+  scenarioName = '',
   maxMinutes = 120,
   className = '',
 }: StripChartScrubberProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [hintVisible, setHintVisible] = useState(false);
 
-  // Keyboard navigation: Left/Right arrows
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Do not capture if focused on input/textarea
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
-
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         onTimestepChange(Math.min(maxMinutes, currentTimestep + 5));
@@ -50,9 +50,7 @@ export const StripChartScrubber = ({
     };
     updatePosition(e.clientX);
 
-    const onPointerMove = (moveEv: PointerEvent) => {
-      updatePosition(moveEv.clientX);
-    };
+    const onPointerMove = (moveEv: PointerEvent) => updatePosition(moveEv.clientX);
     const onPointerUp = () => {
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
@@ -62,97 +60,96 @@ export const StripChartScrubber = ({
   };
 
   const progressPct = (currentTimestep / maxMinutes) * 100;
+  const majorMarks = [0, 30, 60, 90, 120];
+  const allTicks = Array.from({ length: maxMinutes / 5 + 1 }, (_, i) => i * 5);
 
   return (
-    <div className={`w-full bg-gauge-panel border-t-2 border-rule flex flex-col ${className}`}>
-      {/* Control Strip Bar */}
-      <div className="flex items-center justify-between px-4 py-1.5 border-b border-rule bg-gauge-room text-scale-11 font-mono uppercase text-contour">
-        <div className="flex items-center gap-4">
+    <div className={`w-full bg-gauge-panel border-t border-rule flex flex-col ${className}`} style={{ height: 88 }}>
+      <div className="flex items-center gap-4 px-6 border-b border-rule" style={{ height: 44 }}>
+        <button
+          type="button"
+          onClick={onTogglePlay}
+          className={`w-8 h-8 flex items-center justify-center border text-scale-15 transition-colors ${
+            isPlaying
+              ? 'border-danger-vermilion text-danger-vermilion bg-danger-vermilion/10'
+              : 'border-rule text-offwhite hover:border-lichen'
+          }`}
+        >
+          {isPlaying ? '■' : '▶'}
+        </button>
+
+        <span className="font-display font-extrabold text-scale-44 text-offwhite leading-none tabular-nums tracking-tight">
+          T+{currentTimestep.toString().padStart(3, '0')}
+          <span className="text-scale-15 font-mono text-secondary ml-1 font-normal">min</span>
+        </span>
+
+        {scenarioName && (
+          <span className="text-scale-13 font-mono text-secondary ml-2 truncate">
+            {scenarioName}
+          </span>
+        )}
+
+        <div className="ml-auto relative">
           <button
             type="button"
-            onClick={onTogglePlay}
-            className={`px-3 py-1 border text-scale-11 font-mono font-medium tracking-wider uppercase transition-colors flex items-center gap-1.5 ${
-              isPlaying
-                ? 'bg-danger-vermilion/20 border-danger-vermilion text-danger-vermilion'
-                : 'bg-gauge-panel border-rule hover:border-lichen text-offwhite'
-            }`}
+            onMouseEnter={() => setHintVisible(true)}
+            onMouseLeave={() => setHintVisible(false)}
+            className="w-6 h-6 border border-rule text-secondary font-mono text-scale-13 flex items-center justify-center hover:border-lichen hover:text-offwhite"
           >
-            <span>{isPlaying ? '■ PAUSE' : '▶ RUN'}</span>
+            ?
           </button>
-
-          <div className="flex items-center gap-1 text-[10px]">
-            <span className="text-contour">TIMELINE SCRUBBER:</span>
-            <span className="text-offwhite font-bold">[← / → KEYS TO STEP 5M]</span>
-          </div>
-        </div>
-
-        {/* Big Shoulders Time Readout */}
-        <div className="flex items-baseline gap-2">
-          <span className="text-contour text-[10px]">ELAPSED TIME:</span>
-          <span className="font-display font-extrabold text-scale-28 text-offwhite tracking-tight leading-none">
-            T+{currentTimestep.toString().padStart(3, '0')}
-          </span>
-          <span className="font-mono text-scale-11 text-lichen">MIN</span>
+          {hintVisible && (
+            <div className="absolute bottom-8 right-0 bg-gauge-panel border border-rule px-3 py-2 text-scale-13 font-mono text-secondary whitespace-nowrap z-50">
+              ← / → keys: step 5 min · Space: play/pause
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Physical Strip-Chart Paper Area */}
       <div
         ref={containerRef}
         onPointerDown={handlePointerDown}
-        className="relative h-14 w-full bg-[#141B1E] cursor-ew-resize select-none overflow-hidden"
-        style={{
-          backgroundImage:
-            'linear-gradient(to bottom, #2E3B40 1px, transparent 1px), linear-gradient(to bottom, transparent 11px, #1C2428 12px)',
-          backgroundSize: '100% 12px',
-        }}
+        className="relative flex-1 bg-gauge-room cursor-ew-resize select-none overflow-hidden"
       >
-        {/* Strip-chart Major / Minor Vertical Time Grid Lines */}
-        <div className="absolute inset-0 pointer-events-none flex justify-between px-2">
-          {Array.from({ length: 25 }).map((_, idx) => {
-            const min = idx * 5;
-            const isMajor = min % 15 === 0;
-            const leftPct = (min / maxMinutes) * 100;
-            return (
-              <div
-                key={min}
-                className="absolute top-0 bottom-0 flex flex-col justify-between"
-                style={{ left: `${leftPct}%` }}
-              >
-                <div
-                  className={`w-[1px] ${
-                    isMajor ? 'h-full bg-rule' : 'h-3 bg-rule/50'
-                  }`}
-                />
-                {isMajor && (
-                  <span className="text-[9px] font-mono text-contour pl-1 pb-0.5 select-none">
-                    T+{min}
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Recorded Wave Shading on paper */}
         <div
-          className="absolute top-0 bottom-0 left-0 bg-lichen/10 border-r border-lichen/40 pointer-events-none transition-all duration-75"
+          className="absolute top-0 bottom-0 left-0 bg-lichen/10 border-r border-lichen/30 pointer-events-none transition-all duration-75"
           style={{ width: `${progressPct}%` }}
         />
 
-        {/* Physical Stylus / Pen Cursor Line */}
+        {allTicks.map((t) => {
+          const isMajor = majorMarks.includes(t);
+          const leftPct = (t / maxMinutes) * 100;
+          return (
+            <div
+              key={t}
+              className="absolute top-0 pointer-events-none"
+              style={{ left: `${leftPct}%` }}
+            >
+              <div
+                className="w-px"
+                style={{
+                  height: isMajor ? '100%' : 8,
+                  background: isMajor ? '#2E3B40' : '#2E3B40',
+                  opacity: isMajor ? 1 : 0.5,
+                }}
+              />
+              {isMajor && (
+                <span
+                  className="absolute top-2 text-scale-12 font-mono text-secondary select-none"
+                  style={{ left: 3 }}
+                >
+                  T+{t}
+                </span>
+              )}
+            </div>
+          );
+        })}
+
         <div
           className="absolute top-0 bottom-0 pointer-events-none z-10 transition-all duration-75"
           style={{ left: `${progressPct}%`, transform: 'translateX(-50%)' }}
         >
-          {/* Pen Head Needle */}
-          <div className="w-0.5 h-full bg-danger-vermilion" />
-          <div className="absolute top-0 -left-1.5 w-3.5 h-3 bg-danger-vermilion text-[8px] font-mono text-gauge-room flex items-center justify-center font-bold">
-            ▼
-          </div>
-          <div className="absolute bottom-0 -left-6 bg-gauge-panel border border-danger-vermilion px-1 py-0.2 text-[9px] font-mono text-offwhite whitespace-nowrap">
-            T+{currentTimestep}m
-          </div>
+          <div className="w-px h-full bg-danger-vermilion" />
         </div>
       </div>
     </div>

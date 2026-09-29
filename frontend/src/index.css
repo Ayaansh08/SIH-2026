@@ -1,20 +1,7 @@
+@import './styles/tokens.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --color-gauge-room: #11171A;
-  --color-gauge-panel: #1A2226;
-  --color-rule: #2E3B40;
-  --color-paper: #E9E4D3;
-  --color-paper-panel: #DDD6C0;
-  --color-ink: #1E2723;
-  --color-offwhite: #E6E2D3;
-  --color-lichen: #6E8B74;
-  --color-contour: #7D8A80;
-  --color-watch-amber: #E0A526;
-  --color-danger-vermilion: #E2461F;
-}
 
 * {
   box-sizing: border-box;
@@ -28,11 +15,9 @@ body,
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #11171A;
-  color: #E6E2D3;
 }
 
-/* Subtle SVG feTurbulence grain overlay (opacity <= 0.06), pure CSS inline data URI */
+/* Subtle SVG feTurbulence grain overlay (pure CSS inline data URI) */
 .gauge-grain {
   position: relative;
 }
@@ -42,7 +27,7 @@ body,
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.045;
+  opacity: var(--theme-grain-opacity, 0.04);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
@@ -51,52 +36,105 @@ body,
   position: relative;
   height: 5px;
   width: 100%;
-  border-top: 1px solid #2E3B40;
-  border-bottom: 1px solid #2E3B40;
+  border-top: 1px solid var(--theme-rule, #2E3B40);
+  border-bottom: 1px solid var(--theme-rule, #2E3B40);
 }
 .double-rule-v {
   position: relative;
   width: 5px;
   height: 100%;
-  border-left: 1px solid #2E3B40;
-  border-right: 1px solid #2E3B40;
+  border-left: 1px solid var(--theme-rule, #2E3B40);
+  border-right: 1px solid var(--theme-rule, #2E3B40);
 }
+
+/* Registration cross — page corners */
+.corner-cross {
+  position: fixed;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--theme-cross, #2E3B40);
+  opacity: 0.8;
+  pointer-events: none;
+  user-select: none;
+  z-index: 9000;
+}
+.corner-cross--tl { top: 10px; left: 10px; }
+.corner-cross--tr { top: 10px; right: 10px; }
+.corner-cross--bl { bottom: 10px; left: 10px; }
+.corner-cross--br { bottom: 10px; right: 10px; }
 
 /* Survey stamp: double border, uppercase, slight letterspacing */
 .survey-stamp {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   border: 1px double currentColor;
   outline: 1px solid currentColor;
   outline-offset: 1px;
 }
 
-/* Leaflet map survey styling: OSM tiles filtered with CSS (grayscale + contrast + darkened, sepia tint) */
-.survey-map .leaflet-tile-pane {
-  filter: grayscale(100%) invert(92%) sepia(25%) hue-rotate(140deg) saturate(30%) brightness(55%) contrast(140%);
-}
-
+/* Leaflet map survey container */
 .survey-map .leaflet-container {
-  background-color: #11171A;
+  background-color: var(--theme-bg, #11171A);
 }
 
-/* Diagonal hatch pattern for inundation extent */
+/* Invert and tone OSM tiles to tactical dark palette without requiring API keys */
+.survey-map .leaflet-tile-pane {
+  filter: brightness(0.7) invert(1) contrast(1.15) hue-rotate(200deg) saturate(0.35);
+}
+
+/* Restyle Leaflet zoom controls */
+.survey-map .leaflet-control-zoom {
+  border: 1px solid var(--theme-rule, #2E3B40) !important;
+  border-radius: 0 !important;
+  overflow: hidden;
+}
+.survey-map .leaflet-control-zoom a {
+  background-color: var(--theme-panel, #1A2226) !important;
+  color: var(--theme-text, #E6E2D3) !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid var(--theme-rule, #2E3B40) !important;
+  width: 28px !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  font-size: 16px !important;
+}
+.survey-map .leaflet-control-zoom a:hover {
+  background-color: var(--theme-bg, #11171A) !important;
+  color: var(--theme-lichen, #6E8B74) !important;
+}
+
+/* Diagonal hatch for inundation extent */
 .hatch-pattern {
   background-size: 8px 8px;
   background-image: repeating-linear-gradient(
     45deg,
-    rgba(226, 70, 31, 0.35) 0px,
-    rgba(226, 70, 31, 0.35) 1.5px,
+    rgba(226, 70, 31, 0.28) 0px,
+    rgba(226, 70, 31, 0.28) 1.5px,
     transparent 1.5px,
     transparent 6px
   );
+}
+
+/* Marquee animation for ticker tape */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  display: inline-flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+.animate-marquee:hover,
+.animate-marquee:focus-within {
+  animation-play-state: paused;
 }
 
 /* Reduced motion preference */

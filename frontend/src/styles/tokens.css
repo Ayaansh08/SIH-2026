@@ -1,0 +1,40 @@
+/* Pravah-X Unified Design Tokens: Night ↔ Paper */
+
+:root,
+[data-theme="night"] {
+  --theme-bg: #11171A;
+  --theme-panel: #1A2226;
+  --theme-panel-subtle: #141B1E;
+  --theme-text: #E6E2D3;
+  --theme-text-muted: #A3AEA5;
+  --theme-rule: #2E3B40;
+  --theme-rule-subtle: #1F292E;
+  --theme-lichen: #6E8B74;
+  --theme-amber: #E0A526;
+  --theme-vermilion: #E2461F;
+  --theme-cross: #2E3B40;
+  --theme-cross-opacity: 0.35;
+  --theme-grain-opacity: 0.035;
+}
+
+[data-theme="paper"] {
+  --theme-bg: #E9E4D3;
+  --theme-panel: #DDD6C0;
+  --theme-panel-subtle: #E3DCC8;
+  --theme-text: #1E2723;
+  --theme-text-muted: #4F5E56;
+  --theme-rule: #1E2723;
+  --theme-rule-subtle: #BCB49E;
+  --theme-lichen: #6E8B74;
+  --theme-amber: #E0A526;
+  --theme-vermilion: #E2461F;
+  --theme-cross: #1E2723;
+  --theme-cross-opacity: 0.12;
+  --theme-grain-opacity: 0.045;
+}
+
+/* Base resets & utilities using dynamic theme variables */
+body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}

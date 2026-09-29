@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DotGrid } from '../components/reactbits/DotGrid';
-import { DecryptedText } from '../components/reactbits/DecryptedText';
+import { AppHeader } from '../ui/AppHeader';
+import { Wordmark } from '../components/Wordmark';
 
 const CORRIDOR_TICKER = [
   'CHUNGTHANG 27.60°N 88.65°E · 8.4M STAGE · ALERT',
@@ -24,130 +25,206 @@ export const EntryPage = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full bg-gauge-room text-offwhite gauge-grain flex flex-col justify-between p-4 sm:p-8 select-none">
-      {/* Background DotGrid */}
-      <DotGrid gap={24} dotSize={1.5} />
+    <div className="relative min-h-screen w-full bg-gauge-room text-offwhite gauge-grain flex flex-col justify-between select-none">
+      {/* Page-corner registration crosses */}
+      <span className="corner-cross corner-cross--tl">┼</span>
+      <span className="corner-cross corner-cross--tr">┼</span>
+      <span className="corner-cross corner-cross--bl">┼</span>
+      <span className="corner-cross corner-cross--br">┼</span>
 
-      {/* Top Survey Sheet Header Bar */}
-      <header className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between border-b border-rule pb-3 gap-2">
-        <div className="flex items-center gap-4">
-          <div className="survey-stamp text-lichen">SHEET SIH-2026-TEESTA</div>
-          <span className="font-mono text-scale-11 text-contour">
-            SERIES 1:50,000 · EASTERN HIMALAYAN BASIN 4
+      {/* DotGrid background */}
+      <DotGrid gap={36} dotSize={1.2} opacity={0.18} />
+
+      {/* Header */}
+      <AppHeader routeTag="HOME" />
+      <div className="double-rule-h" />
+
+      {/* Full-width Live Gauge Ticker */}
+      <div className="relative z-10 w-full bg-gauge-panel border-b border-rule px-4 sm:px-8 py-2 flex items-center justify-between font-mono text-scale-13 text-secondary">
+        <div className="flex items-center gap-3 truncate">
+          <span className="text-lichen font-bold uppercase tracking-wider shrink-0">
+            ● LIVE GAUGE TICKER:
+          </span>
+          <span className="text-offwhite font-medium truncate">
+            {CORRIDOR_TICKER[tickerIndex]}
           </span>
         </div>
-        <div className="flex items-center gap-4 text-scale-11 font-mono text-contour">
-          <span>COORDINATE DATUM: WGS84</span>
-          <span className="text-lichen">● TELEMETRY ACTIVE</span>
-        </div>
-      </header>
+        <span className="hidden sm:inline text-xs text-secondary shrink-0 ml-4">
+          CYCLE: 3.5S · 7 ACTIVE REACHES
+        </span>
+      </div>
 
-      {/* Centerpiece Main Block */}
-      <main className="relative z-10 my-auto py-8 flex flex-col gap-6 max-w-5xl">
-        {/* Title Block Box */}
-        <div className="border-l-4 border-l-lichen pl-4 sm:pl-6 flex flex-col">
-          <div className="text-scale-13 font-mono tracking-widest text-contour uppercase">
-            HYDROLOGY & DISASTER MANAGEMENT PLATFORM
+      {/* Main Content Area */}
+      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 flex flex-col justify-center gap-8">
+        {/* Hero 12-Col Grid: Left Intro / Right Survey Inset Map */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Left 7 cols: Title Block */}
+          <div className="lg:col-span-7 flex flex-col gap-4">
+            <span className="text-scale-14 text-secondary font-sans tracking-wide uppercase">
+              Flood digital twin · Teesta basin
+            </span>
+
+            <div className="text-offwhite">
+              <Wordmark size="hero" asLink={false} />
+            </div>
+
+            <p className="text-scale-20 font-sans text-secondary leading-tight">
+              Simulate. Verify. Act. Recover.
+            </p>
+
+            <p className="text-scale-15 font-sans text-offwhite/90 leading-relaxed max-w-xl">
+              Dam-break and glacial-lake flood simulation that turns hydrodynamic model output into
+              infrastructure, evacuation and community resilience decisions across the Teesta corridor.
+            </p>
           </div>
-          <h1 className="font-display font-extrabold text-scale-44 sm:text-scale-88 tracking-tight uppercase text-offwhite leading-none mt-1">
-            <DecryptedText text="TEESTAWATCH" speed={25} maxIterations={12} />
-          </h1>
-          <p className="font-sans text-scale-15 text-contour max-w-2xl mt-2 leading-relaxed">
-            Dam-break and glacial lake outburst flood (GLOF) hydrodynamic early-warning system
-            spanning the Teesta River Basin corridor from South Lhonak/Chungthang (Sikkim) down to
-            Sevoke (North Bengal).
-          </p>
-        </div>
 
-        {/* Live Coordinate Ticker */}
-        <div className="bg-gauge-panel border border-rule px-4 py-2 flex items-center justify-between font-mono text-scale-11 text-contour">
-          <div className="flex items-center gap-3">
-            <span className="text-danger-vermilion font-bold">LIVE GAUGE TICKER:</span>
-            <span className="text-offwhite font-medium">{CORRIDOR_TICKER[tickerIndex]}</span>
+          {/* Right 5 cols: Survey Inset Mini-Map */}
+          <div className="lg:col-span-5 bg-gauge-panel border-2 border-rule p-4 flex flex-col gap-2 relative">
+            <div className="flex items-center justify-between border-b border-rule pb-2 font-mono text-xs text-secondary">
+              <span className="font-bold text-offwhite">CORRIDOR SURVEY INSET // REACH 01–07</span>
+              <span>1:250,000</span>
+            </div>
+
+            {/* Inset SVG Graphic */}
+            <div className="relative w-full h-44 bg-gauge-room border border-rule flex items-center justify-center overflow-hidden p-2">
+              <svg viewBox="0 0 300 130" className="w-full h-full overflow-visible">
+                {/* Survey Grid Coordinates */}
+                <line x1="0" y1="65" x2="300" y2="65" stroke="#2E3B40" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="150" y1="0" x2="150" y2="130" stroke="#2E3B40" strokeWidth="0.5" strokeDasharray="3 3" />
+
+                {/* River S-Curve Corridor */}
+                <path
+                  d="M 20 20 Q 80 50 140 35 T 220 85 T 280 110"
+                  fill="none"
+                  stroke="#6E8B74"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+
+                {/* 8 Bridge Ticks along corridor */}
+                {[
+                  [20, 20, 'Chungthang'],
+                  [65, 42, 'Mangan'],
+                  [110, 38, 'Dikchu'],
+                  [140, 35, 'Makha'],
+                  [180, 55, 'Singtam'],
+                  [220, 85, 'Rangpo'],
+                  [250, 98, 'Teesta Bazar'],
+                  [280, 110, 'Sevoke'],
+                ].map(([x, y], i) => (
+                  <g key={i}>
+                    <circle cx={x as number} cy={y as number} r="3" fill="#11171A" stroke="#7D8A80" strokeWidth="1.5" />
+                    {i === 2 && (
+                      /* Highlighted WATCH / ALERT Station */
+                      <g>
+                        <circle cx={x as number} cy={y as number} r="6" fill="none" stroke="#E0A526" strokeWidth="1.5" strokeDasharray="2 2" />
+                        <text x={(x as number) + 8} y={(y as number) - 4} fill="#E0A526" fontSize="9" fontFamily="IBM Plex Mono" fontWeight="bold">
+                          DIKCHU [WATCH]
+                        </text>
+                      </g>
+                    )}
+                  </g>
+                ))}
+
+                {/* Start & End Labels */}
+                <text x="25" y="16" fill="#A3AEA5" fontSize="8" fontFamily="IBM Plex Mono">SOUTH LHONAK (0 KM)</text>
+                <text x="210" y="125" fill="#A3AEA5" fontSize="8" fontFamily="IBM Plex Mono">SEVOKE PLAIN (129 KM)</text>
+              </svg>
+
+              {/* Scale bar in bottom right */}
+              <div className="absolute bottom-1 right-2 font-mono text-[9px] text-secondary flex items-center gap-1">
+                <span>0</span>
+                <span className="w-8 h-[2px] bg-secondary inline-block" />
+                <span>25 KM</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between font-mono text-[10px] text-secondary pt-1">
+              <span>DATUM: WGS84 · EPSG:32644</span>
+              <span className="text-lichen">● 8 STATIONS MONITORED</span>
+            </div>
           </div>
-          <span className="hidden sm:inline text-[10px]">T-CYCLE: 3.5S</span>
         </div>
 
-        {/* Two Asymmetric Entry Gateways */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch pt-2">
-          {/* Gateway 1: Authority Command Console (BIG: 8 cols) */}
+        {/* 12-Column Entry Cards (8 / 4 Grid) */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+          {/* Card 1: Authority Command Console (8 cols) */}
           <Link
             to="/console"
-            className="md:col-span-8 bg-gauge-panel border-2 border-rule hover:border-lichen p-6 flex flex-col justify-between group transition-colors shadow-2xl relative overflow-hidden"
+            className="md:col-span-8 bg-gauge-panel border-2 border-rule hover:border-lichen p-6 sm:p-8 flex flex-col justify-between group transition-colors shadow-2xl relative"
           >
-            <span className="absolute top-2 right-2 font-mono text-scale-11 text-contour">┼</span>
-            <div className="flex flex-col gap-2">
+            <span className="absolute top-2 right-2 font-mono text-xs text-secondary">┼</span>
+            <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <span className="survey-stamp text-lichen">AUTHORITY ACCESS</span>
-                <span className="font-mono text-scale-11 text-contour">DISPATCH GATEWAY 01</span>
+                <span className="survey-stamp text-lichen border-lichen">AUTHORITY ACCESS</span>
+                <span className="font-mono text-xs text-secondary">DISPATCH DESK 01</span>
               </div>
-              <h2 className="font-display font-extrabold text-scale-28 sm:text-scale-44 text-offwhite uppercase tracking-tight group-hover:text-lichen transition-colors">
-                COMMAND CONSOLE
+              <h2 className="font-display font-extrabold text-3xl sm:text-scale-44 text-offwhite uppercase tracking-tight group-hover:text-lichen transition-colors">
+                Command Console
               </h2>
-              <p className="font-sans text-scale-13 text-contour leading-relaxed max-w-lg">
+              <p className="font-sans text-scale-15 text-secondary leading-relaxed max-w-2xl">
                 Surveillance desk for emergency authorities, dam safety inspectors, and state
-                disaster authorities. Latin Hypercube parameter sweeps, interactive hydrodynamic
-                wave propagation, corridor gauge ledgers, and precursor seismic/lake anomaly feeds.
+                disaster authorities. Latin Hypercube sweeps, hydrodynamic wave propagation,
+                gauge ledgers, and precursor telemetry feeds.
               </p>
             </div>
 
-            <div className="mt-6 pt-3 border-t border-rule flex items-center justify-between font-mono text-scale-11">
+            <div className="mt-6 pt-4 border-t border-rule flex items-center justify-between font-mono text-xs">
               <span className="text-lichen font-bold group-hover:underline flex items-center gap-2">
                 <span>ENTER GAUGE ROOM CONSOLE</span>
                 <span>→</span>
               </span>
-              <span className="text-contour">DARK INTERFACE [HIGH RESOLUTION]</span>
+              <span className="text-secondary">DARK GAUGE ROOM PALETTE</span>
             </div>
           </Link>
 
-          {/* Gateway 2: Citizen Alerts (SMALLER: 4 cols) */}
+          {/* Card 2: Pravah-X Citizen (4 cols) — in Dark Gauge Palette */}
           <Link
             to="/citizen"
-            className="md:col-span-4 bg-[#1E2629] border border-rule hover:border-contour p-5 flex flex-col justify-between group transition-colors relative"
+            className="md:col-span-4 bg-gauge-panel text-offwhite border-2 border-rule hover:border-lichen p-6 sm:p-8 flex flex-col justify-between group transition-colors shadow-xl relative"
           >
-            <span className="absolute top-2 right-2 font-mono text-scale-11 text-contour">┼</span>
-            <div className="flex flex-col gap-2">
+            <span className="absolute top-2 right-2 font-mono text-xs text-secondary">┼</span>
+            <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <span className="survey-stamp text-contour">PUBLIC WARNING</span>
-                <span className="font-mono text-scale-11 text-contour">PHASE 2</span>
+                <span className="survey-stamp text-lichen border-lichen bg-gauge-room">CITIZEN ADVISORY</span>
+                <span className="font-mono text-xs text-secondary">PHASE 2</span>
               </div>
-              <h3 className="font-display font-bold text-scale-28 text-offwhite uppercase tracking-tight group-hover:text-offwhite">
-                CITIZEN ALERTS
+              <h3 className="font-display font-extrabold text-2xl sm:text-3xl text-offwhite uppercase tracking-tight group-hover:text-lichen transition-colors">
+                PRAVAH-X CITIZEN
               </h3>
-              <p className="font-sans text-scale-13 text-contour leading-relaxed">
-                Mobile-first evacuation corridor routing and localized warning broadcasts for riverine
-                residents and downstream communities.
+              <p className="font-sans text-sm text-secondary leading-relaxed">
+                Emergency evacuation routing, reach status, live bridge closure telemetry, and Schedule VII CSR asset protection.
               </p>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-rule flex items-center justify-between font-mono text-scale-11">
-              <span className="text-contour font-medium group-hover:text-offwhite flex items-center gap-1">
-                <span>STUB OVERVIEW</span>
+            <div className="mt-6 pt-4 border-t border-rule flex items-center justify-between font-mono text-xs">
+              <span className="text-lichen font-bold group-hover:underline flex items-center gap-1">
+                <span>OPEN CITIZEN VIEW</span>
                 <span>→</span>
               </span>
-              <span className="text-[10px] text-contour">LIGHT PAPER LAYER</span>
+              <span className="text-secondary">DARK THEME</span>
             </div>
           </Link>
         </div>
       </main>
 
-      {/* Bottom Title Block Engineering Stamp Footer */}
-      <footer className="relative z-10 border-t-2 border-rule pt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-scale-11 text-contour bg-gauge-room">
+      {/* Engineering Stamp Footer */}
+      <footer className="relative z-10 border-t-2 border-rule px-4 sm:px-8 py-3 grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-scale-13 text-secondary bg-gauge-room">
         <div>
-          <span className="block text-[9px] text-contour">PROJECTION:</span>
+          <span className="block text-[10px] text-secondary">PROJECTION:</span>
           <span className="text-offwhite">UTM ZONE 45N / EPSG:32644</span>
         </div>
         <div>
-          <span className="block text-[9px] text-contour">SPH / DELFT3D COUPLING:</span>
-          <span className="text-lichen">SURROGATE READY</span>
+          <span className="block text-[10px] text-secondary">HYDRODYNAMIC COUPLING:</span>
+          <span className="text-lichen font-medium">SURROGATE READY</span>
         </div>
         <div>
-          <span className="block text-[9px] text-contour">DEVELOPED FOR:</span>
-          <span className="text-offwhite">SMART INDIA HACKATHON 2026</span>
+          <span className="block text-[10px] text-secondary">PLATFORM:</span>
+          <span className="text-offwhite">PRAVAH-X · SIH 2026</span>
         </div>
         <div className="text-right">
-          <span className="block text-[9px] text-contour">SECURITY STATUS:</span>
-          <span className="text-lichen">STATION LINK SECURE</span>
+          <span className="block text-[10px] text-secondary">TELEMETRY STATUS:</span>
+          <span className="text-lichen font-medium">CORRIDOR SECURE</span>
         </div>
       </footer>
     </div>

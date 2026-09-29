@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import type { InundationFrame, Station } from '../../types/contracts';
 import { TEESTA_CORRIDOR_NODES } from '../../data/corridor';
+import { MAP_CONFIG } from '../../config/map';
 
 interface SurveyMapProps {
   frame: InundationFrame | null;
@@ -36,10 +37,12 @@ export const SurveyMap = ({
       attributionControl: false,
     });
 
-    // OSM Tiles filtered via CSS class .survey-map
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 14,
-      minZoom: 8,
+    // Standard OSM tiles with CSS tactical dark filter (No API key needed)
+    L.tileLayer(MAP_CONFIG.tileUrl, {
+      subdomains: MAP_CONFIG.subdomains,
+      attribution: MAP_CONFIG.attribution,
+      maxZoom: MAP_CONFIG.maxZoom,
+      minZoom: MAP_CONFIG.minZoom,
     }).addTo(map);
 
     // Zoom control at bottom right
